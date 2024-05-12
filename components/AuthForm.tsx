@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import { useState } from "react";
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,13 +12,16 @@ import { Form } from "@/components/ui/form";
 import CustomInput from "./CustomInput";
 import { authFormSchema } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { SignUp } from "@/lib/actions/user.actions";
+import { SignIn } from "@/lib/actions/user.actions";
 
 const AuthForm = ({ type }: { type: string }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const formSchema = authFormSchema(type);
-
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -31,7 +34,25 @@ const AuthForm = ({ type }: { type: string }) => {
   // 2. Define a submit handler.
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsLoading(true);
-    console.log(data);
+
+    try {
+      if (type === "sign-up") {
+        const newUser = await SignUp(data);
+        setUser(newUser);
+      }
+      if (type === "sign-in") {
+        const response = await SignIn({
+          email: data.email,
+          password: data.password,
+        });
+        if (response) router.push("/");
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+
     setIsLoading(false);
   };
 
@@ -88,6 +109,12 @@ const AuthForm = ({ type }: { type: string }) => {
                     name="address1"
                     label="Address"
                     placeholder="Enter your specific address"
+                  />
+                  <CustomInput
+                    control={form.control}
+                    name="city"
+                    label="City"
+                    placeholder="Enter your City"
                   />
                   <div className="flex gap-4">
                     <CustomInput
