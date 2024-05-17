@@ -15,7 +15,7 @@ export default withSentryConfig(withSentryConfig(nextConfig, {
 
 // Suppresses source map uploading logs during build
 silent: true,
-org: "developer004",
+org: "abv-iiitm",
 project: "javascript-nextjs",
 }, {
 // For all available options, see:
@@ -50,7 +50,7 @@ automaticVercelMonitors: true,
 
 // Suppresses source map uploading logs during build
 silent: true,
-org: "developer004",
+org: "abv-iiitm",
 project: "javascript-nextjs",
 }, {
 // For all available options, see:
